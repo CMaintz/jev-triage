@@ -1,0 +1,13 @@
+name: security
+on:
+  pull_request: {}
+  push:
+    branches: [main]
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  tier0:
+    uses: CMaintz/foundry/.github/workflows/tier0.yml@v1.2.0
+  sast:
+    uses: CMaintz/foundry/.github/workflows/semgrep.yml@v1.2.0

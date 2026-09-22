@@ -1,0 +1,14 @@
+# Copy to <repo>/.habit-hooks/config.toml
+plugins = ["typescript", "generic"]
+
+# Tests are not structural-smell-gated: long, mock-heavy specs are normal and fine.
+# CI should police production maintainability, not test structure. (Language-
+# agnostic principle — see README.)
+files = ["**/*.ts", "**/*.tsx", "!**/*.spec.ts", "!**/*.spec.tsx", "!**/*.test.ts", "!**/*.test.tsx"]
+
+# File-length: flag files over 300 lines (oversized-file). 300 rather than the
+# sensor default of 200 — verbose-but-cohesive files (esp. Java) legitimately pass
+# 200, and this is a ratcheted coaching signal, not a hard wall. Config/data/prose
+# are already excluded by the `files` globs; keep big prompts in their own resource file.
+[sensors.line-count]
+args = ["--max", "300"]

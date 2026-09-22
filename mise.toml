@@ -1,0 +1,86 @@
+# Foundry verb interface — TypeScript / Node template.
+# Copy to a repo's mise.toml and adjust the tool versions. See CONTRACT.md.
+
+[tools]
+node = "22.14.0" # pin to whatever the repo actually uses
+
+[env]
+# Put local binaries on PATH so tasks call `eslint`, not `npx eslint`.
+_.path = ["./node_modules/.bin"]
+
+# ── FOUNDRY_SINCE — changed-scope for the fast placements ────────────────────
+# A git ref (empty ⇒ origin/main). When SET, the file-local verbs (`lint`, `test`)
+# restrict work to files changed since its merge-base with HEAD — for the in-loop
+# Stop hook and pre-push, where speed matters. When UNSET (CI, and the final
+# `/ship` gate), they run whole-tree. Whole-program checks (`typecheck`) ignore it
+# and always run whole-tree — a changed file can break an unchanged one. This is
+# execute-scope, safe only because whole-tree CI is the authoritative backstop.
+# See designs/changed-scope-gate.md. An unresolvable ref falls back to whole-tree
+# (never skips). The signal is opt-in per verb; callers MUST NOT require it.
+
+[tasks.fix]
+description = "Auto-fix what is mechanically fixable; never opinionated"
+# The prune pass drops suppressions whose violation no longer exists, which is
+# what makes the baseline a one-way ratchet: fix an `any`, and it can never be
+# silently re-suppressed.
+run = [
+    "eslint . --fix",
+    "eslint . --prune-suppressions",
+]
+
+[tasks.lint]
+description = "Style and smells; non-mutating"
+# Fails on new violations AND on stale suppressions, so the baseline cannot rot.
+# eslint-suppressions.json holds the accepted debt — it is committed, and it may
+# only ever shrink. Never add to it by hand; never delete it to make lint pass.
+# Honours FOUNDRY_SINCE (see [env]): scoped to changed files at the fast placements,
+# whole-tree in CI. eslint findings are file-local, so scoping is safe; the
+# whole-tree CI run still catches stale suppressions repo-wide.
+run = '''
+set -eu
+if [ -z "${FOUNDRY_SINCE+x}" ]; then exec eslint .; fi
+base="${FOUNDRY_SINCE:-origin/main}"
+mb=$(git merge-base "$base" HEAD 2>/dev/null || true)
+if [ -z "$mb" ]; then echo "changed-scope lint: cannot resolve '$base'; whole-tree"; exec eslint .; fi
+changed=$(git diff --name-only --diff-filter=ACMR "$mb" -- '*.ts' '*.tsx' '*.js' '*.cjs' '*.mjs' 2>/dev/null || true)
+untracked=$(git ls-files --others --exclude-standard -- '*.ts' '*.tsx' '*.js' '*.cjs' '*.mjs' 2>/dev/null || true)
+files=$(printf '%s\n%s\n' "$changed" "$untracked" | sort -u | sed '/^$/d')
+if [ -z "$files" ]; then echo "changed-scope lint: no changed JS/TS since $mb"; exit 0; fi
+printf '%s\n' "$files" | xargs -d '\n' eslint
+'''
+
+[tasks.typecheck]
+description = "Static types"
+# Single non-composite tsconfig, so a plain --noEmit check (not `tsc -b`).
+run = "tsc --noEmit"
+
+[tasks.test]
+description = "Tests with coverage floor"
+# FOUNDRY_SINCE unset (CI / final gate): full suite + coverage floor — the oracle.
+# FOUNDRY_SINCE set (in-loop / pre-push): only tests affected by the changeset, via
+# vitest's module graph, and WITHOUT the coverage floor — coverage is a whole-tree
+# property, so it's enforced on the unset path only. Unresolvable ref ⇒ full suite.
+run = '''
+set -eu
+if [ -z "${FOUNDRY_SINCE+x}" ]; then exec vitest run --coverage; fi
+base="${FOUNDRY_SINCE:-origin/main}"
+mb=$(git merge-base "$base" HEAD 2>/dev/null || true)
+if [ -z "$mb" ]; then echo "changed-scope test: cannot resolve '$base'; full suite"; exec vitest run --coverage; fi
+exec vitest run --changed "$mb"
+'''
+
+[tasks.audit]
+description = "Dependency vulnerabilities. Local subset; CI Tier 0 adds gitleaks"
+run = "npm audit --audit-level=critical"
+
+[tasks.gate]
+description = "The authoritative composite — the oracle. Nothing merges without this green."
+# Array form runs sequentially. Do NOT use `depends`: mise runs dependencies in
+# parallel with no ordering guarantee, which makes gate output unreadable and
+# hides which check failed first.
+run = [
+    "mise run lint",
+    "mise run typecheck",
+    "mise run test",
+    "mise run audit",
+]

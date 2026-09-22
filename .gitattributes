@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.gif binary
+# Ratchet baselines must be LF so --prune-suppressions + core.autocrlf don't
+# report a phantom modified file with an empty diff.
+eslint-suppressions.json text eol=lf
+.habit-hooks/snooze.json text eol=lf

@@ -1,0 +1,12 @@
+name: bootstrap
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 6 * * 1' # weekly auto-prune of the snooze baseline
+jobs:
+  bootstrap:
+    uses: CMaintz/foundry/.github/workflows/bootstrap.yml@v1.2.0
+    with:
+      working_directory: '.'
+      habit_hooks_plugin: 'habit-hooks-typescript'
+    permissions: { contents: write, pull-requests: write }

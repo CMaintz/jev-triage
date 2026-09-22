@@ -1,0 +1,36 @@
+name: 'Jev Triage'
+description: 'Fast, near-free issue triage powered by TypeSafe AI Jev, with confidence-gated escalation to a human or an LLM.'
+author: 'Christoffer Maintz'
+branding:
+  icon: 'filter'
+  color: 'purple'
+
+inputs:
+  github-token:
+    description: 'Token with issues:write. Defaults to the workflow token.'
+    default: ${{ github.token }}
+  config-path:
+    description: 'Path to the triage config file, relative to the repo root.'
+    default: '.github/jev-triage.yml'
+  jev-api-key:
+    description: 'API token for the Jev provider (TypeSafe first-party key, or Cloudflare API token).'
+    required: true
+  cloudflare-account-id:
+    description: 'Cloudflare account id. Required only when provider: cloudflare.'
+    required: false
+  llm-api-key:
+    description: 'Optional LLM key. Enables escalation (on_low_confidence: escalate).'
+    required: false
+  dry-run:
+    description: 'When true, post a single suggestion comment instead of applying labels.'
+    default: 'false'
+
+outputs:
+  applied-labels:
+    description: 'Comma-separated labels applied to the issue.'
+  escalated:
+    description: 'true if the issue was escalated (low confidence).'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

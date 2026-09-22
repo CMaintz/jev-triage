@@ -1,0 +1,13 @@
+name: gate
+on:
+  pull_request: {}
+  push:
+    branches: [main]
+concurrency:
+  group: gate-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  gate:
+    uses: CMaintz/foundry/.github/workflows/ts.yml@v1.2.0
+    with:
+      working_directory: '.'

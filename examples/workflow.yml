@@ -1,0 +1,22 @@
+# Example consumer workflow — copy to .github/workflows/triage.yml
+name: Triage issues
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cmaintz/jev-triage@v0   # pin to a released SHA in real use
+        with:
+          # first-party (default): a single secret
+          jev-api-key: ${{ secrets.JEV_API_KEY }}
+          # for provider: cloudflare, instead set jev-api-key to a Cloudflare API token AND:
+          # cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # llm-api-key: ${{ secrets.OPENAI_API_KEY }}   # enables escalation (v0.3)
+          # dry-run: 'true'                               # suggest, don't apply

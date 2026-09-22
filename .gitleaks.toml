@@ -1,0 +1,18 @@
+# Starter gitleaks config. Copy to a repo root as .gitleaks.toml and point the
+# secret-scan job at it (GITLEAKS_CONFIG env var — tier0.yml wires this).
+#
+# CRITICAL: secrets are NOT ratcheted. A real leaked secret is remediated
+# (rotate, then purge from history), never allowlisted. Only add a path here once
+# you've CONFIRMED the finding is not a real secret — e.g. public-by-design
+# config, or a dummy test fixture. Prefer exact file paths over directories.
+title = "gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Confirmed non-secrets only."
+paths = [
+  # '''frontend/src/environments/environment\.ts$''',   # public Firebase web config
+  # '''.*/src/test/.*Fixture\.java$''',                  # dummy test values
+]
