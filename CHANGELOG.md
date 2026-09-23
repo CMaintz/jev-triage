@@ -29,6 +29,8 @@ All notable changes to this project are documented here. Format: [Keep a Changel
   core coverage 100% lines / 84.9% branches (floor 80). Bundled `dist/index.js` committed.
 - Upgraded vitest → 5.x to clear 2 critical advisories the gate's `audit` flagged; removed
   the `prettier` false-positive and all 10 unused-exports the habit sensors found.
+- **Live-validated against the real Jev API** (`test/live.test.ts`, skipped without a key):
+  a real bug report classified end-to-end through the provider port + triage core.
 
 ### Known issues
 
@@ -39,6 +41,5 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ### TODO before v0.1.0
 
-- Exercise end-to-end against a live Jev key (first-party or Cloudflare).
 - Seed the habit-hooks snooze baseline (run the `bootstrap` workflow once on GitHub).
 - E2E test on a real repo (labels applied, summary rendered).

@@ -49,7 +49,7 @@ See [`examples/jev-triage.yml`](examples/jev-triage.yml) for the full config sur
 
 ## Status
 
-Scaffold — **passes the Foundry gate** (`mise run gate`: lint → typecheck → test → audit), 13 unit tests, core coverage 100% lines / 84.9% branches, bundles clean. The provider adapters are **verified against the official [API reference](https://docs.typesafe.ai/api)** and [Cloudflare's model page](https://developers.cloudflare.com/ai/models/typesafe/jev/); not yet exercised against a live key. Contributions welcome. See [`CHANGELOG.md`](CHANGELOG.md) and the [full spec](../SPECS/jev-triage.md).
+Scaffold — **passes the Foundry gate** (`mise run gate`: lint → typecheck → test → audit), 13 unit tests, core coverage 100% lines / 84.9% branches, bundles clean. The provider adapters are **verified against the official [API reference](https://docs.typesafe.ai/api)** and [Cloudflare's model page](https://developers.cloudflare.com/ai/models/typesafe/jev/), and **validated against the real Jev API** (a live test classifies a real bug report end-to-end; `test/live.test.ts`). Contributions welcome. See [`CHANGELOG.md`](CHANGELOG.md) and the [full spec](../SPECS/jev-triage.md).
 
 ## Development
 
