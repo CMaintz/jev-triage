@@ -19,7 +19,13 @@ inputs:
     description: 'Cloudflare account id. Required only when provider: cloudflare.'
     required: false
   llm-api-key:
-    description: 'Optional LLM key. Enables escalation (on_low_confidence: escalate).'
+    description: 'Optional LLM key. Enables the escalation cascade (on_low_confidence: escalate).'
+    required: false
+  llm-model:
+    description: 'Model for LLM escalation (OpenAI-compatible chat completions). Default gpt-4o-mini.'
+    default: 'gpt-4o-mini'
+  llm-base-url:
+    description: 'Base URL for the LLM API (any OpenAI-compatible endpoint). Default https://api.openai.com/v1.'
     required: false
   dry-run:
     description: 'When true, post a single suggestion comment instead of applying labels.'

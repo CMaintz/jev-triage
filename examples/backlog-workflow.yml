@@ -1,0 +1,22 @@
+# Example: sweep the whole open-issue backlog on a schedule (and on demand).
+# Copy to .github/workflows/triage-backlog.yml
+name: Triage backlog
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 6 * * 1' # every Monday 06:00 UTC
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  backlog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cmaintz/jev-triage@v1
+        with:
+          jev-api-key: ${{ secrets.JEV_API_KEY }}
+          # Optional: escalate low-confidence issues to an LLM (needs on_low_confidence: escalate in config)
+          llm-api-key: ${{ secrets.OPENAI_API_KEY }}
+          llm-model: gpt-4o-mini

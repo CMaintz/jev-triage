@@ -4,42 +4,33 @@ All notable changes to this project are documented here. Format: [Keep a Changel
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-24
+
+First stable release — Jev-powered GitHub issue triage: per-issue, backlog sweep, LLM escalation, and duplicate detection.
+
 ### Added
 
-- Scaffold: typed Jev provider port with Cloudflare + TypeSafe adapters.
-- Pure triage core (`buildState`, `buildQuestions`, `decide`) with unit tests.
-- Declarative `.github/jev-triage.yml` config (choice / score / noul questions).
-- Confidence-gated labelling with `triage:needs-human` fallback; dry-run mode.
-- GitHub Step Summary reporting labels, escalation, tokens and estimated cost.
-- Shared `postJson` helper with 429/529 exponential backoff (per API docs).
-- Optional Noul `criteria` (true/false meanings) for better calibration.
-- Onboarded onto the **Foundry** engineering gate: `mise.toml` (six-verb interface),
-  vendored ESLint base + `.prettierrc`, vitest coverage floor, `.gitleaks.toml`,
-  `renovate.json`, `scripts/ruleset_guard.py`, `.gitattributes` LF normalization, and the
-  Foundry reusable caller workflows (gate / security / ratchet / bootstrap `@v1.2.0`).
-  Replaces the placeholder CI.
-- `knip` + `ts-morph` dev-deps and `knip.json` so the habit-hooks TS sensors run.
+- **Per-issue triage:** title+body → Jev `state`, one batched call of choice/score/noul questions →
+  typed answers become labels, `priority:` scores, spam/security flags, and deterministic team routing;
+  confidence-gated with a `triage:needs-human` fallback and a dry-run mode.
+- **Backlog sweep** — on `workflow_dispatch` / `schedule`, map-reduce every open issue (skips PRs and
+  `marker_label`-tagged issues; capped by `max_issues`). Sweep a whole backlog for pennies.
+- **LLM escalation cascade** — `on_low_confidence: escalate` + `llm-api-key` re-classifies low-confidence
+  issues via any OpenAI-compatible endpoint (`llm-model` / `llm-base-url`), then labels + leaves a rationale.
+- **Duplicate detection** (`dedupe: true`) — GitHub search retrieves candidates; a Jev Choice picks the
+  duplicate (or "none"); a match gets `possible-duplicate` + a link (never auto-closes).
+- `GitHubPort` seam keeps Octokit at the edge so the orchestrator (`triageIssue` / `triageBacklog`) is
+  fully unit-tested; Step Summary reports labels, escalations, duplicates, skipped, tokens, and cost.
+- Shared Jev provider port (TypeSafe + Cloudflare, `postJson` backoff); onboarded onto the Foundry gate.
 
 ### Verified
 
-- Request/response wire shape confirmed against [docs.typesafe.ai/api](https://docs.typesafe.ai/api)
-  and Cloudflare's model page (2026-09): first-party `POST /v1/systemone` with `{model,state,questions}`;
-  Cloudflare `POST /ai/run` with `{model,input:{state,questions}}`, raw (un-enveloped) response.
-- **`mise run gate` (lint → typecheck → test → audit) passes locally.** 13 unit tests;
-  core coverage 100% lines / 84.9% branches (floor 80). Bundled `dist/index.js` committed.
-- Upgraded vitest → 5.x to clear 2 critical advisories the gate's `audit` flagged; removed
-  the `prettier` false-positive and all 10 unused-exports the habit sensors found.
-- **Live-validated against the real Jev API** (`test/live.test.ts`, skipped without a key):
-  a real bug report classified end-to-end through the provider port + triage core.
+- Wire shape confirmed against [docs.typesafe.ai/api](https://docs.typesafe.ai/api) + Cloudflare's model page;
+  `mise run gate` green; **28 unit tests** (+1 skipped live), coverage 99% lines / 86% branches. `dist/` bundled.
+- **Live-validated against the real Jev API** (`test/live.test.ts`): a real bug report classified end-to-end.
 
 ### Known issues
 
-- 1 high `undici` advisory reaches in via `@actions/github` (the official GitHub toolkit);
-  no upstream fix exists yet, and it's below the `--audit-level=critical` gate. Renovate bumps it when fixed.
-- habits (structural-smell) job: 43 `non-essential-comment` findings remain; these seed as the
-  ratchet baseline via the `bootstrap` workflow on first push (Foundry's designed onboarding).
-
-### TODO before v0.1.0
-
-- Seed the habit-hooks snooze baseline (run the `bootstrap` workflow once on GitHub).
-- E2E test on a real repo (labels applied, summary rendered).
+- 1 high `undici` advisory reaches in via `@actions/github` (the official GitHub toolkit); no upstream fix
+  yet, and it's below the `--audit-level=critical` gate. Renovate bumps it when fixed.
+- The habits (structural-smell) CI job seeds its comment baseline via the `bootstrap` workflow on first run.

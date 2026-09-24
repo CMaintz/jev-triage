@@ -15,6 +15,10 @@ const config: TriageConfig = {
     security: { kind: 'noul', apply_label: 'security', min: 0.7, alert: true },
   },
   routing: { bug: '@team/backend' },
+  max_issues: 200,
+  marker_label: 'jev-triaged',
+  dedupe: false,
+  dedupe_candidates: 5,
 };
 
 describe('decide', () => {

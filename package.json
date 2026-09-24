@@ -1,9 +1,17 @@
 {
   "name": "jev-triage",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Fast, near-free GitHub issue triage powered by TypeSafe AI Jev, with confidence-gated escalation.",
   "license": "MIT",
   "author": "Christoffer Maintz",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CMaintz/jev-triage.git"
+  },
+  "homepage": "https://github.com/CMaintz/jev-triage#readme",
+  "bugs": {
+    "url": "https://github.com/CMaintz/jev-triage/issues"
+  },
   "type": "module",
   "engines": {
     "node": ">=20"

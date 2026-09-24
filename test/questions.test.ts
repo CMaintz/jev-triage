@@ -13,6 +13,10 @@ const base: TriageConfig = {
     sev: { kind: 'score', levels: ['a', 'b'] },
     spam: { kind: 'noul', apply_label: 'spam', criteria: { true: 'is spam', false: 'not spam' } },
   },
+  max_issues: 200,
+  marker_label: 'jev-triaged',
+  dedupe: false,
+  dedupe_candidates: 5,
 };
 
 describe('buildQuestions', () => {

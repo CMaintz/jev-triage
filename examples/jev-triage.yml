@@ -1,36 +1,44 @@
 # Example config — copy to .github/jev-triage.yml in your repo.
-provider: typesafe          # typesafe (first-party, one secret) | cloudflare (Workers AI)
-model: jev-1.13.0           # PIN the version; thresholds shift between releases
-escalate_below: 0.6         # confidence gate for choice/score answers
-on_low_confidence: label    # label | escalate | comment
-low_confidence_label: "triage:needs-human"
+provider: typesafe # typesafe (first-party, one secret) | cloudflare (Workers AI)
+model: jev-1.13.0 # PIN the version; thresholds shift between releases
+escalate_below: 0.6 # confidence gate for choice/score answers
+on_low_confidence: label # label | escalate (call an LLM) | comment
+low_confidence_label: 'triage:needs-human'
+
+# Backlog mode (workflow_dispatch / schedule triggers): sweep every open issue.
+max_issues: 200 # cap per run (0 = no cap)
+marker_label: 'jev-triaged' # applied after triage; backlog skips issues already carrying it ("" disables)
+
+# Duplicate detection: GitHub search retrieves candidates, Jev Choice judges them.
+dedupe: false
+dedupe_candidates: 5
 
 questions:
   type:
     kind: choice
     apply_as_label: true
     options:
-      bug: "a defect in existing behavior"
-      feature: "a request for new capability"
-      question: "a usage question, not a defect"
-      docs: "a documentation problem"
+      bug: 'a defect in existing behavior'
+      feature: 'a request for new capability'
+      question: 'a usage question, not a defect'
+      docs: 'a documentation problem'
   severity:
     kind: score
     levels: [trivial, minor, major, critical]
-    label_prefix: "priority:"
+    label_prefix: 'priority:'
   spam:
     kind: noul
-    instructions: "Is this spam or not a genuine issue?"
-    apply_label: "spam"
+    instructions: 'Is this spam or not a genuine issue?'
+    apply_label: 'spam'
     min: 0.85
   security:
     kind: noul
-    instructions: "Does this describe a security vulnerability?"
-    apply_label: "security"
+    instructions: 'Does this describe a security vulnerability?'
+    apply_label: 'security'
     min: 0.7
     alert: true
 
 # Deterministic — resolved in code, never sent to Jev.
 routing:
-  bug: "@your-org/backend"
-  docs: "@your-org/docs"
+  bug: '@your-org/backend'
+  docs: '@your-org/docs'

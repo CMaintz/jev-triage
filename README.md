@@ -40,6 +40,19 @@ Existing LLM triage bots are too slow and too expensive to run on every issue, a
 
 See [`examples/jev-triage.yml`](examples/jev-triage.yml) for the full config surface.
 
+## Beyond per-issue triage
+
+- **Backlog sweep** — trigger on `workflow_dispatch` / `schedule` and it map-reduces every open
+  issue (skipping PRs and anything already carrying the `marker_label`), capped by `max_issues`.
+  Sweep a whole backlog for pennies. See [`examples/backlog-workflow.yml`](examples/backlog-workflow.yml).
+- **LLM escalation cascade** — with `on_low_confidence: escalate` and an `llm-api-key`, low-confidence
+  issues are re-classified by an LLM (any OpenAI-compatible endpoint via `llm-model` / `llm-base-url`),
+  which then labels and leaves a one-line rationale. Jev is System One; the LLM is System Two — invoked
+  only where Jev is unsure.
+- **Duplicate detection** — set `dedupe: true`: GitHub search retrieves candidate issues, and Jev picks
+  the duplicate (or "none") from that bounded set. A match gets a `possible-duplicate` label + link
+  (it never auto-closes). Retrieval is code; judgment is Jev.
+
 ## Honest limitations
 
 - **A first-pass, not a decision-maker.** Jev is ~68% accurate on classification — fast and cheap, not smarter. The confidence gate is the point. It never auto-_closes_ issues.
@@ -49,7 +62,7 @@ See [`examples/jev-triage.yml`](examples/jev-triage.yml) for the full config sur
 
 ## Status
 
-Scaffold — **passes the Foundry gate** (`mise run gate`: lint → typecheck → test → audit), 13 unit tests, core coverage 100% lines / 84.9% branches, bundles clean. The provider adapters are **verified against the official [API reference](https://docs.typesafe.ai/api)** and [Cloudflare's model page](https://developers.cloudflare.com/ai/models/typesafe/jev/), and **validated against the real Jev API** (a live test classifies a real bug report end-to-end; `test/live.test.ts`). Contributions welcome. See [`CHANGELOG.md`](CHANGELOG.md) and the [full spec](../SPECS/jev-triage.md).
+**v1.0** — per-issue triage, **backlog sweep**, **LLM escalation cascade**, and **duplicate detection**. Passes the Foundry gate (`mise run gate`: lint → typecheck → test → audit), 28 unit tests, bundles clean. **Verified against the official [API reference](https://docs.typesafe.ai/api)** and [Cloudflare's model page](https://developers.cloudflare.com/ai/models/typesafe/jev/), and **validated against the real Jev API** (a live test classifies a real bug report end-to-end; `test/live.test.ts`). Contributions welcome. See [`CHANGELOG.md`](CHANGELOG.md) and the [full spec](../SPECS/jev-triage.md).
 
 ## Development
 

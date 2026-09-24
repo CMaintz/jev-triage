@@ -49,6 +49,14 @@ export interface TriageConfig {
   /** deterministic map: chosen type label -> team handle. NOT a Jev question. */
   routing?: Record<string, string>;
   dry_run?: boolean;
+  /** backlog mode: max issues to process per run (0 = no cap). */
+  max_issues: number;
+  /** marker label applied after triage; backlog skips issues already carrying it (empty = no marker). */
+  marker_label: string;
+  /** enable duplicate detection (GitHub search retrieves candidates, Jev Choice judges them). */
+  dedupe: boolean;
+  /** number of candidate issues to weigh for dedupe. */
+  dedupe_candidates: number;
 }
 
 const DEFAULTS = {
@@ -59,6 +67,10 @@ const DEFAULTS = {
   escalate_below: 0.6,
   on_low_confidence: 'label',
   low_confidence_label: 'triage:needs-human',
+  max_issues: 200,
+  marker_label: 'jev-triaged',
+  dedupe: false,
+  dedupe_candidates: 5,
 } as const;
 
 export function parseConfig(raw: string): TriageConfig {

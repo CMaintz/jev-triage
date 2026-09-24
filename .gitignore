@@ -4,4 +4,6 @@ node_modules/
 coverage/
 .env
 .env.local
+.idea/
+.vscode/
 # NOTE: dist/ is intentionally committed — a Node GitHub Action runs the bundled output.
