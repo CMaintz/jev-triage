@@ -2,6 +2,8 @@
 
 **Fast, near-free GitHub issue triage — powered by [TypeSafe AI's Jev](https://typesafe.ai/).**
 
+![jev-triage classifying an issue and sweeping the backlog](demo/demo.svg)
+
 Jev is a _System One_ model: text state in, **typed probabilistic decisions out** (`choice` / `score` / `noul`), each with a calibrated confidence, in ~70–500 ms at roughly free cost. That combination makes it viable to run on **every** issue the moment it opens — and to escalate only the ones it's unsure about to a human or a real LLM.
 
 ```yaml
