@@ -1,5 +1,5 @@
-// Generates demo.cast (asciinema v2) with correct ANSI escapes, then render:
-//   node demo/build-cast.mjs && npx svg-term-cli --in demo/demo.cast --out demo/demo.svg --window --width 78 --height 16
+// Generates demo.cast (asciinema v2) with correct ANSI escapes.
+// Render: node demo/build-cast.mjs && npx svg-term-cli --in demo/demo.cast --out demo/demo.svg --window
 import { writeFileSync } from 'node:fs';
 
 const E = '\x1b';
