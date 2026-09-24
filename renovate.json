@@ -4,7 +4,7 @@
   "labels": ["dependencies"],
   "packageRules": [
     {
-      "description": "Supply-chain: wait before adopting a freshly published release. Security alerts bypass this (see vulnerabilityAlerts).",
+      "description": "Supply-chain: wait before adopting a freshly published release.",
       "matchPackageNames": ["*"],
       "minimumReleaseAge": "7 days"
     },
@@ -20,13 +20,14 @@
       "groupName": "mise toolchain"
     },
     {
-      "description": "Security fixes land fast and on their own, labelled.",
+      "description": "Security fixes land fast — exempt from the release-age wait — on their own, labelled.",
       "matchPackageNames": ["*"],
       "isVulnerabilityAlert": true,
+      "minimumReleaseAge": false,
       "labels": ["security"],
       "prPriority": 10
     }
   ],
   "lockFileMaintenance": { "enabled": true },
-  "vulnerabilityAlerts": { "labels": ["security"], "minimumReleaseAge": "0" }
+  "vulnerabilityAlerts": { "labels": ["security"] }
 }
