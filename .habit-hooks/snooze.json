@@ -1,0 +1,1 @@
+["jscpd", "src/config.ts", "src/core/decide.ts", "src/core/questions.ts", "src/core/state.ts", "src/dedupe.ts", "src/llm.ts", "src/providers/cloudflare.ts", "src/providers/http.ts", "src/providers/jev-provider.ts", "src/providers/typesafe.ts", "src/triage.ts", "vitest.config.ts"]
