@@ -6,6 +6,12 @@ on:
 concurrency:
   group: security-${{ github.ref }}
   cancel-in-progress: true
+# Grant what the reusable workflows request at the job level (tier0 needs
+# pull-requests: read for gitleaks/ruleset-guard). Without this, a read-only
+# default token makes the callable escalate beyond the caller → startup_failure.
+permissions:
+  contents: read
+  pull-requests: read
 jobs:
   tier0:
     uses: CMaintz/foundry/.github/workflows/tier0.yml@v1.2.0
