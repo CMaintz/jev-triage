@@ -2,8 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", "helpers:pinGitHubActionDigests", ":dependencyDashboard", ":semanticCommits"],
   "labels": ["dependencies"],
-  "minimumReleaseAge": "3 days",
   "packageRules": [
+    {
+      "description": "Supply-chain: wait before adopting a freshly published release. Security alerts bypass this (see vulnerabilityAlerts).",
+      "matchPackageNames": ["*"],
+      "minimumReleaseAge": "7 days"
+    },
     {
       "description": "The CONTRACT says pin everything; Renovate is the update path. Keep Actions pinned to a digest and bump the digest + the trailing # vN comment together.",
       "matchManagers": ["github-actions"],
@@ -24,5 +28,5 @@
     }
   ],
   "lockFileMaintenance": { "enabled": true },
-  "vulnerabilityAlerts": { "labels": ["security"] }
+  "vulnerabilityAlerts": { "labels": ["security"], "minimumReleaseAge": "0" }
 }
