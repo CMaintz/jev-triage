@@ -11,7 +11,7 @@ const KEY = process.env.JEV_API_KEY;
 
 const CONFIG = `
 provider: typesafe
-model: jev-1.13.0
+model: jev-latest
 escalate_below: 0.6
 questions:
   type:

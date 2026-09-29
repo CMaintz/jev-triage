@@ -16,7 +16,7 @@ import { postJson } from './http.js';
 export class TypeSafeProvider implements JevProvider {
   constructor(
     private readonly apiKey: string,
-    private readonly model = 'jev-1.13.0',
+    private readonly model = 'jev-latest',
     private readonly baseUrl = 'https://api.typesafe.ai/v1',
   ) {}
 

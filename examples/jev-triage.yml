@@ -1,6 +1,6 @@
 # Example config — copy to .github/jev-triage.yml in your repo.
 provider: typesafe # typesafe (first-party, one secret) | cloudflare (Workers AI)
-model: jev-1.13.0 # PIN the version; thresholds shift between releases
+model: jev-latest # tracks the recommended model; pin a version (e.g. jev-1.13.0) for reproducibility
 escalate_below: 0.6 # confidence gate for choice/score answers
 on_low_confidence: label # label | escalate (call an LLM) | comment
 low_confidence_label: 'triage:needs-human'

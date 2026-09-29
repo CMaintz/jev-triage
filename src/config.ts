@@ -63,7 +63,7 @@ const DEFAULTS = {
   // First-party is the simpler default: one secret, official pricing (output free),
   // pinned versions. Cloudflare is an optional alternative for those already on Workers AI.
   provider: 'typesafe',
-  model: 'jev-1.13.0',
+  model: 'jev-latest',
   escalate_below: 0.6,
   on_low_confidence: 'label',
   low_confidence_label: 'triage:needs-human',
