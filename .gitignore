@@ -1,9 +1,0 @@
-node_modules/
-*.log
-.DS_Store
-coverage/
-.env
-.env.local
-.idea/
-.vscode/
-# NOTE: dist/ is intentionally committed — a Node GitHub Action runs the bundled output.

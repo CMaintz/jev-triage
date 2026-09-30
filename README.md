@@ -1,79 +1,27 @@
 # jev-triage
 
-**Fast, near-free GitHub issue triage — powered by [TypeSafe AI's Jev](https://typesafe.ai/).**
+Label GitHub issues for basically nothing, using [TypeSafe AI's Jev](https://typesafe.ai). Jev gives a label plus a confidence score; if it's not sure, the issue gets flagged for a human (or an LLM, if you give it a key) instead of guessing.
 
-![jev-triage classifying an issue and sweeping the backlog](demo/demo.svg)
-
-Jev is a _System One_ model: text state in, **typed probabilistic decisions out** (`choice` / `score` / `noul`), each with a calibrated confidence, in ~70–500 ms at roughly free cost. That combination makes it viable to run on **every** issue the moment it opens — and to escalate only the ones it's unsure about to a human or a real LLM.
+The code lives in [jev-tools](https://github.com/CMaintz/jev-tools/tree/main/packages/triage) now. This repo is just the wrapper so the action can sit on the Marketplace.
 
 ```yaml
-# .github/workflows/triage.yml
 on:
-  issues: { types: [opened, edited, reopened] }
-permissions: { issues: write, contents: read }
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
 jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-      - uses: cmaintz/jev-triage@v0
+      - uses: actions/checkout@v4
+      - uses: CMaintz/jev-triage@v2
         with:
           jev-api-key: ${{ secrets.JEV_API_KEY }}
-          cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 ```
 
-```
---- run summary ---
-#142  label=bug, priority:major   conf 0.91   ✓ applied
-#143  type uncertain              conf 0.48   → triage:needs-human
-#144  security flagged            noul 0.83   ⚠ alerted
-1,204 issues triaged this month · $0.11
-```
+Config, inputs and the escalation setup are documented in the [jev-tools triage README](https://github.com/CMaintz/jev-tools/tree/main/packages/triage#readme).
 
-## Why this exists
-
-Existing LLM triage bots are too slow and too expensive to run on every issue, and they hand you prose you still have to parse. Jev returns a _typed value your workflow branches on_ and a _confidence you gate on_. The result is triage that's cheap enough to always run and honest enough to defer when it isn't sure.
-
-## How it works
-
-1. On a new/edited issue, the title + body become the Jev `state`.
-2. Your `.github/jev-triage.yml` defines the questions — one batched call answers them all (adding questions is near-free).
-3. Confident answers become labels / routing; **low-confidence answers are never applied** — they get `triage:needs-human` or escalate to an LLM.
-4. A run summary reports labels, escalations, tokens and estimated cost.
-
-See [`examples/jev-triage.yml`](examples/jev-triage.yml) for the full config surface.
-
-## Beyond per-issue triage
-
-- **Backlog sweep** — trigger on `workflow_dispatch` / `schedule` and it map-reduces every open
-  issue (skipping PRs and anything already carrying the `marker_label`), capped by `max_issues`.
-  Sweep a whole backlog for pennies. See [`examples/backlog-workflow.yml`](examples/backlog-workflow.yml).
-- **LLM escalation cascade** — with `on_low_confidence: escalate` and an `llm-api-key`, low-confidence
-  issues are re-classified by an LLM (any OpenAI-compatible endpoint via `llm-model` / `llm-base-url`),
-  which then labels and leaves a one-line rationale. Jev is System One; the LLM is System Two — invoked
-  only where Jev is unsure.
-- **Duplicate detection** — set `dedupe: true`: GitHub search retrieves candidate issues, and Jev picks
-  the duplicate (or "none") from that bounded set. A match gets a `possible-duplicate` label + link
-  (it never auto-closes). Retrieval is code; judgment is Jev.
-
-## Honest limitations
-
-- **A first-pass, not a decision-maker.** Jev is ~68% accurate on classification — fast and cheap, not smarter. The confidence gate is the point. It never auto-_closes_ issues.
-- **Text only.** Screenshots and attachments carry no signal to Jev.
-- **No arithmetic / dates.** Those stay in code (e.g. routing is a deterministic map, not a Jev question).
-- **Needs a Jev key.** Sign up at [TypeSafe](https://typesafe.ai/) for a first-party key, or use [Cloudflare Workers AI](https://developers.cloudflare.com/ai/models/typesafe/jev/) (`typesafe/jev`). First-party is the default (one secret).
-
-## Status
-
-**v1.0** — per-issue triage, **backlog sweep**, **LLM escalation cascade**, and **duplicate detection**. Passes the Foundry gate (`mise run gate`: lint → typecheck → test → audit), 28 unit tests, bundles clean. **Verified against the official [API reference](https://docs.typesafe.ai/api)** and [Cloudflare's model page](https://developers.cloudflare.com/ai/models/typesafe/jev/), and **validated against the real Jev API** (a live test classifies a real bug report end-to-end; `test/live.test.ts`). Contributions welcome. See [`CHANGELOG.md`](CHANGELOG.md) and the [full spec](../SPECS/jev-triage.md).
-
-## Development
-
-Quality is enforced through [Foundry](https://github.com/CMaintz/foundry)'s six-verb gate:
-
-```bash
-mise run gate   # lint → typecheck → test (coverage floor) → audit — the oracle
-mise run fix    # auto-fix (eslint --fix + prune suppressions)
-npm run build   # bundle dist/index.js (ncc) — commit the result
-```
-
-MIT © Christoffer Maintz
+`@v1` still points at the old standalone version and keeps working.

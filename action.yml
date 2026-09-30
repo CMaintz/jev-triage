@@ -1,5 +1,5 @@
 name: 'Jev Triage'
-description: 'Fast, near-free issue triage powered by TypeSafe AI Jev, with confidence-gated escalation to a human or an LLM.'
+description: 'Cheap GitHub issue triage with TypeSafe AI Jev. Confidence-gated labels, unsure cases go to a human or an LLM.'
 author: 'Christoffer Maintz'
 branding:
   icon: 'filter'
@@ -22,10 +22,10 @@ inputs:
     description: 'Optional LLM key. Enables the escalation cascade (on_low_confidence: escalate).'
     required: false
   llm-model:
-    description: 'Model for LLM escalation (OpenAI-compatible chat completions). Default gpt-4o-mini.'
+    description: 'Model for LLM escalation (OpenAI-compatible chat completions).'
     default: 'gpt-4o-mini'
   llm-base-url:
-    description: 'Base URL for the LLM API (any OpenAI-compatible endpoint). Default https://api.openai.com/v1.'
+    description: 'Base URL for the LLM API (any OpenAI-compatible endpoint).'
     required: false
   dry-run:
     description: 'When true, post a single suggestion comment instead of applying labels.'
@@ -34,9 +34,22 @@ inputs:
 outputs:
   applied-labels:
     description: 'Comma-separated labels applied to the issue.'
+    value: ${{ steps.triage.outputs.applied-labels }}
   escalated:
     description: 'true if the issue was escalated (low confidence).'
+    value: ${{ steps.triage.outputs.escalated }}
 
 runs:
-  using: 'node20'
-  main: 'dist/index.js'
+  using: 'composite'
+  steps:
+    - id: triage
+      uses: CMaintz/jev-tools/packages/triage@33bf30570578059748f0fe2dea63114ea8760275
+      with:
+        github-token: ${{ inputs.github-token }}
+        config-path: ${{ inputs.config-path }}
+        jev-api-key: ${{ inputs.jev-api-key }}
+        cloudflare-account-id: ${{ inputs.cloudflare-account-id }}
+        llm-api-key: ${{ inputs.llm-api-key }}
+        llm-model: ${{ inputs.llm-model }}
+        llm-base-url: ${{ inputs.llm-base-url }}
+        dry-run: ${{ inputs.dry-run }}

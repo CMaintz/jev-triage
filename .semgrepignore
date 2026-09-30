@@ -1,4 +1,0 @@
-# Example/doc workflows intentionally show the user-facing `@v1` tag — the way
-# consumers are meant to pin this Action — which trips the mutable-action-tag rule.
-# These are documentation snippets, not this repo's production CI.
-examples/
