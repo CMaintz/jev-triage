@@ -19,6 +19,8 @@
   "scripts": {
     "build": "ncc build src/main.ts -o dist --minify",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint . && prettier --check \"**/*.ts\"",
+    "format": "prettier --write \"**/*.ts\" && eslint . --fix",
     "test": "vitest run",
     "test:watch": "vitest"
   },
