@@ -17,11 +17,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: CMaintz/jev-triage@v2
+      - uses: CMaintz/jev-triage@v1
         with:
           jev-api-key: ${{ secrets.JEV_API_KEY }}
 ```
 
 Config, inputs and the escalation setup are documented in the [jev-tools triage README](https://github.com/CMaintz/jev-tools/tree/main/packages/triage#readme).
 
-`@v1` still points at the old standalone version and keeps working.
+Pin `@v1` to follow updates, or `@v1.0.1` for an exact release. `@v1.0.0` is the last standalone version from before the move to jev-tools.
