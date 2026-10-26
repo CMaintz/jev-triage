@@ -43,7 +43,7 @@ runs:
   using: 'composite'
   steps:
     - id: triage
-      uses: CMaintz/jev-tools/packages/triage@954cb477d2b7af77080b0e44bdfde39235560c09 # triage-v1.1.0
+      uses: CMaintz/jev-tools/packages/triage@f96d291cf32e25a726a274b585e73fb4c85b1526 # triage-v1.1.1
       with:
         github-token: ${{ inputs.github-token }}
         config-path: ${{ inputs.config-path }}
