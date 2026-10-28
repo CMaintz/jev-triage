@@ -24,4 +24,4 @@ jobs:
 
 Config, inputs and the escalation setup are documented in the [jev-tools triage README](https://github.com/CMaintz/jev-tools/tree/main/packages/triage#readme).
 
-Pin `@v1` to follow updates, or `@v1.1.0` for an exact release. `@v1.0.0` is the last standalone version from before the move to jev-tools.
+Pin `@v1` to follow updates, or `@v1.1.1` for an exact release. `@v1.0.0` is the last standalone version from before the move to jev-tools.
